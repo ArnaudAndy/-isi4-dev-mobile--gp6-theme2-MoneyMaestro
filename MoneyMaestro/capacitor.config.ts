@@ -1,8 +1,8 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
-  appName: 'finance-app-ui',
+  appId: 'io.money-maestro.starter',
+  appName: 'Money Maestro',
   webDir: 'www',
   bundledWebRuntime: false
 };
