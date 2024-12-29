@@ -21,15 +21,13 @@ export class HomePage implements OnInit, AfterContentChecked {
   ngOnInit() {
     this.accounts = [
       { id: 1, acc_no: '57868945098', balance: '200000' },
-      { id: 2, acc_no: '20067091201', balance: '50000' },
-      { id: 3, acc_no: '40163081205', balance: '80000' }
     ];
     this.features = [
-      { id: 1, color: 'tertiary', icon: 'paper-plane', name: 'Send' },
-      { id: 2, color: 'white', icon: 'send', name: 'Request' },
-      { id: 3, color: 'success', icon: 'add-circle', name: 'Top-up' },
-      { id: 4, color: 'light', icon: 'newspaper', name: 'Bills' },
-      { id: 5, color: 'warning', icon: 'card', name: 'Cards' },
+      { id: 1, color: 'tertiary', icon: 'paper-plane', name: 'Loan', path: 'loan' },
+      { id: 2, color: 'white', icon: 'send', name: 'Borrow', path: 'borrow' },
+      { id: 3, color: 'success', icon: 'add-circle', name: 'Top-up', path: 'top-up' },
+      { id: 4, color: 'light', icon: 'newspaper', name: 'Save', path: 'save' },
+      { id: 5, color: 'warning', icon: 'card', name: 'Spend', path: 'spend' },
     ];
     this.transactions = [
       { id: 1, to: 'Piyush Ag.', date: '2022-05-22', amount: 5000 },
