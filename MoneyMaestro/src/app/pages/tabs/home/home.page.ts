@@ -20,7 +20,7 @@ export class HomePage implements OnInit, AfterContentChecked {
 
   ngOnInit() {
     this.accounts = [
-      { id: 1, acc_no: '57868945098', balance: '200000' },
+      { id: 1, acc_no: ' ', balance: '200000' },
     ];
     this.features = [
       { id: 1, color: 'tertiary', icon: 'paper-plane', name: 'Loan', path: 'loan' },

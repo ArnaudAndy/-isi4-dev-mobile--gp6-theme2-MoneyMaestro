@@ -1,7 +1,7 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.money-maestro.starter',
+  appId: 'io.moneymaestro.starter',
   appName: 'Money Maestro',
   webDir: 'www',
   bundledWebRuntime: false

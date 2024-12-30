@@ -7,14 +7,15 @@ import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ReactiveFormsModule } from '@angular/forms';
-import { TransactionFormComponent } from './pages/transaction-form/transaction-form.component';
 import { CommonModule } from '@angular/common';
-import { TransactionListComponent } from './transaction-list/transaction-list.component';
+import { Contacts } from '@awesome-cordova-plugins/contacts/ngx';
+import { SQLite } from '@ionic-native/sqlite/ngx';
+import { TransactionService } from './services/transaction/transaction.service';
 
 @NgModule({
-  declarations: [AppComponent, TransactionFormComponent, TransactionListComponent],
+  declarations: [AppComponent],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, ReactiveFormsModule, CommonModule],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
+  providers: [SQLite, TransactionService, { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, Contacts],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

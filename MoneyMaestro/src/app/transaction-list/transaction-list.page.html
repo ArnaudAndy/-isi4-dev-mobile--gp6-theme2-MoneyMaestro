@@ -1,0 +1,56 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>transaction-list</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="transaction-list-container">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Transaction List</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="loading">
+        <ion-spinner name="lines"></ion-spinner>
+        <p>Loading transactions...</p>
+      </div>
+
+      <!-- No Data State -->
+      <div *ngIf="!isLoading && transactions.length === 0" class="no-data">
+        <ion-text color="medium">
+          <p>No transactions available.</p>
+        </ion-text>
+      </div>
+
+      <!-- Transaction Table -->
+      <ion-grid *ngIf="!isLoading && transactions.length > 0" class="transaction-table">
+        <ion-row class="table-header">
+          <ion-col>ID</ion-col>
+          <ion-col>Type</ion-col>
+          <ion-col>Amount</ion-col>
+          <ion-col>Date</ion-col>
+          <ion-col>Time</ion-col>
+          <ion-col>Contact</ion-col>
+          <ion-col>Returned</ion-col>
+          <ion-col>Actions</ion-col>
+        </ion-row>
+
+        <ion-row *ngFor="let transaction of transactions">
+          <ion-col>{{ transaction.id }}</ion-col>
+          <ion-col>{{ transaction.type }}</ion-col>
+          <ion-col>{{ transaction.amount }}</ion-col>
+          <ion-col>{{ transaction.date }}</ion-col>
+          <ion-col>{{ transaction.time }}</ion-col>
+          <ion-col>{{ transaction.contact }}</ion-col>
+          <ion-col>{{ transaction.isReturned ? 'Yes' : 'No' }}</ion-col>
+          <ion-col>
+            <ion-button size="small" color="primary" (click)="viewTransaction(transaction.id)">
+              View
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

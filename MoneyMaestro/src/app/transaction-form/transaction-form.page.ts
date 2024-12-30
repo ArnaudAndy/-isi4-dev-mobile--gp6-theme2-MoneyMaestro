@@ -1,24 +1,27 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DbService } from 'src/app/services/bd/db.service';
+import { TransactionService } from '../services/transaction/transaction.service';
 
 @Component({
   selector: 'app-transaction-form',
-  templateUrl: './transaction-form.component.html',
-  styleUrls: ['./transaction-form.component.scss'],
+  templateUrl: './transaction-form.page.html',
+  styleUrls: ['./transaction-form.page.scss'],
 })
-export class TransactionFormComponent implements OnInit {
+export class TransactionFormPage implements OnInit {
   transactionForm!: FormGroup;
   transactionType: string = ''; // Will hold the type of transaction (Loan, Borrow, etc.)
 
-  constructor(private fb: FormBuilder, private route: ActivatedRoute,     private router: Router, private dbService: DbService) {
+  constructor(private fb: FormBuilder, private route: ActivatedRoute, private router: Router, private dbService: TransactionService) {}
+
+  ngOnInit() {
     this.route.data.subscribe((data) => {
       this.setTransactionType(data['type']);
     });
     this.transactionForm = this.fb.group({
-      type: ['', Validators.required],
+      id: [1],
       description: ['', Validators.required],
+      type: ['', Validators.required],
       amount: [null, [Validators.required, Validators.min(1)]],
       date: [new Date().toISOString().split('T')[0], Validators.required],
       time: [new Date().toLocaleTimeString('en-GB', { hour12: false }), Validators.required],
@@ -27,40 +30,27 @@ export class TransactionFormComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-    
-  }
-
   // Load form fields dynamically based on the type
-  setTransactionType(type: string) {
+  async setTransactionType(type: string) {
     this.transactionType = type;
     this.transactionForm.patchValue({ type });
   }
 
-  submitForm() {
+  async submitForm() {
     if (this.transactionForm.valid) {
       console.log('Form Submitted:', this.transactionForm.value);
       const formValue = this.transactionForm.value;
 
       // Call the DbService to add the transaction
-      this.dbService
-        .addTransaction({
-          ...formValue,
-          date: new Date(formValue.date),
-        })
-        .then(() => {
-          console.log('Transaction added successfully!');
-          this.router.navigate(['transactions']); // Navigate to transactions list or desired page
-        })
-        .catch((error) => {
-          console.error('Error adding transaction:', error);
-        });
+      await this.dbService.addTransaction(formValue);
+
+      this.router.navigate(['/tabs/home/transaction-list']); // Navigate to the desired page (e.g., home or dashboard)
       } else {
       console.error('Form is invalid');
     }
   }
 
-  cancel() {
-    this.router.navigate(['']); // Navigate to the desired page (e.g., home or dashboard)
+  async cancel() {
+    this.router.navigate(['/']); // Navigate to the desired page (e.g., home or dashboard)
   }
 }

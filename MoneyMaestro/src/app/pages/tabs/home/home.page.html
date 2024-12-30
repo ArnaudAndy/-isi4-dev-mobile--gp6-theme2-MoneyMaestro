@@ -32,7 +32,7 @@
     <swiper [config]="featureConfig">
       <ng-template swiperSlide *ngFor="let feature of features">
         <div>
-          <ion-button slot="icon-only" [color]="feature?.color" [routerLink]="[feature?.path]">
+          <ion-button slot="icon-only" [color]="feature?.color" [routerLink]="feature?.path">
             <ion-icon [name]="feature?.icon"></ion-icon>
           </ion-button>
           <ion-label>{{feature?.name}}</ion-label>
@@ -67,5 +67,4 @@
     </ion-item-group>
 
   </ion-list>
-
 </ion-content>

@@ -2,17 +2,42 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { HomePage } from './home.page';
-import { TransactionFormComponent } from '../../transaction-form/transaction-form.component';
-import { TransactionListComponent } from 'src/app/transaction-list/transaction-list.component';
 
 const routes: Routes = [
   { path: '', component: HomePage },
-  { path: 'loan', component: TransactionFormComponent, data: { type: 'Loan' } },
-  { path: 'borrow', component: TransactionFormComponent, data: { type: 'Borrow' } },
-  { path: 'top-up', component: TransactionFormComponent, data: { type: 'Top-up' } },
-  { path: 'save', component: TransactionFormComponent, data: { type: 'Save' } },
-  { path: 'spend', component: TransactionFormComponent, data: { type: 'Spend' } },
-  { path: 'transactions', component: TransactionListComponent }
+  {
+    path: 'transaction-list',
+    loadChildren: () => import('../../../transaction-list/transaction-list.module').then( m => m.TransactionListPageModule)
+  },
+  {
+    path: 'loan',
+    loadChildren: () => import('../../../transaction-form/transaction-form.module').then( m => m.TransactionFormPageModule),
+    data: { type: 'Loan' }
+  },
+  {
+    path: 'borrow',
+    loadChildren: () => import('../../../transaction-form/transaction-form.module').then( m => m.TransactionFormPageModule),
+    data: { type: 'Borrow' }
+  },
+  {
+    path: 'top-up',
+    loadChildren: () => import('../../../transaction-form/transaction-form.module').then( m => m.TransactionFormPageModule),
+    data: { type: 'Top-up' }
+  },
+  {
+    path: 'save',
+    loadChildren: () => import('../../../transaction-form/transaction-form.module').then( m => m.TransactionFormPageModule),
+    data: { type: 'Save' }
+  },
+  {
+    path: 'spend',
+    loadChildren: () => import('../../../transaction-form/transaction-form.module').then( m => m.TransactionFormPageModule),
+    data: { type: 'Spend' }
+  },
+  {
+    path: 'test',
+    loadChildren: () => import('../../../test/test.module').then( m => m.TestPageModule)
+  },
 ];
 
 @NgModule({
