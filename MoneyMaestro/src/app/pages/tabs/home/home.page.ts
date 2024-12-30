@@ -1,4 +1,5 @@
 import { AfterContentChecked, Component, OnInit } from '@angular/core';
+import { TransactionService } from 'src/app/services/transaction/transaction.service';
 import SwiperCore, { SwiperOptions, Pagination } from 'swiper';
 // install Swiper modules
 SwiperCore.use([Pagination]);
@@ -16,7 +17,7 @@ export class HomePage implements OnInit, AfterContentChecked {
   features: any[] = [];
   transactions: any[] = [];
 
-  constructor() { }
+  constructor(private dbService: TransactionService) { }
 
   ngOnInit() {
     this.accounts = [
@@ -36,6 +37,8 @@ export class HomePage implements OnInit, AfterContentChecked {
       { id: 4, to: 'Akhil Ag.', date: '2022-01-09', amount: 1000 },
       { id: 5, to: 'Prem Ag.', date: '2022-04-13', amount: -800 },
     ];
+
+    this.dbService.getAllTransactions();
   }
 
   ngAfterContentChecked() {

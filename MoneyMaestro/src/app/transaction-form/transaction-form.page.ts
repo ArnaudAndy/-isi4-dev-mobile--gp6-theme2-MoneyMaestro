@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TransactionService } from '../services/transaction/transaction.service';
+import { Transaction } from '../models/transaction/transaction';
 
 @Component({
   selector: 'app-transaction-form',
@@ -25,7 +26,7 @@ export class TransactionFormPage implements OnInit {
       amount: [null, [Validators.required, Validators.min(1)]],
       date: [new Date().toISOString().split('T')[0], Validators.required],
       time: [new Date().toLocaleTimeString('en-GB', { hour12: false }), Validators.required],
-      contact: ['', [Validators.required]],
+      contact: ['', [Validators.maxLength(100)]],
       isReturned: [false],
     });
   }
@@ -41,8 +42,18 @@ export class TransactionFormPage implements OnInit {
       console.log('Form Submitted:', this.transactionForm.value);
       const formValue = this.transactionForm.value;
 
+      let t : Transaction = {
+        id: formValue.id,
+        description: formValue.description,
+        type: formValue.type,
+        amount: formValue.amount,
+        date: new Date(formValue.date),
+        time: formValue.time,
+        contact: formValue.contact,
+        isReturned: formValue.isReturned,
+      };
       // Call the DbService to add the transaction
-      await this.dbService.addTransaction(formValue);
+      await this.dbService.addTransaction(t);
 
       this.router.navigate(['/tabs/home/transaction-list']); // Navigate to the desired page (e.g., home or dashboard)
       } else {
