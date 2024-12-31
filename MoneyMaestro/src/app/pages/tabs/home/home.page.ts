@@ -1,4 +1,5 @@
 import { AfterContentChecked, Component, OnInit } from '@angular/core';
+import { Transaction } from 'src/app/models/transaction/transaction';
 import { TransactionService } from 'src/app/services/transaction/transaction.service';
 import SwiperCore, { SwiperOptions, Pagination } from 'swiper';
 // install Swiper modules
@@ -10,7 +11,8 @@ SwiperCore.use([Pagination]);
   styleUrls: ['./home.page.scss'],
 })
 export class HomePage implements OnInit, AfterContentChecked {
-
+  transactionss: Transaction[] = []; // Replace with your Transaction interface if needed
+  isLoading: boolean = true;
   accounts: any[] = [];
   bannerConfig: SwiperOptions;
   featureConfig: SwiperOptions;
@@ -38,7 +40,7 @@ export class HomePage implements OnInit, AfterContentChecked {
       { id: 5, to: 'Prem Ag.', date: '2022-04-13', amount: -800 },
     ];
 
-    this.dbService.getAllTransactions();
+    this.loadTransactions();
   }
 
   ngAfterContentChecked() {
@@ -51,4 +53,19 @@ export class HomePage implements OnInit, AfterContentChecked {
     };
   }
 
+  // Fetch transactions from the DbService
+  async loadTransactions() {
+    try {
+      this.transactionss = await this.dbService.getAllTransactions();
+    } catch (error) {
+      console.error('Error loading transactions:', error);
+    }
+    this.isLoading = false;
+  }
+
+  // View details of a transaction
+  async viewTransaction(transactionId: number) {
+    console.log('View transaction:', transactionId);
+    // Navigate to a transaction detail page if necessary
+  }
 }

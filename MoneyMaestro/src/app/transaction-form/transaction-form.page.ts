@@ -55,7 +55,7 @@ export class TransactionFormPage implements OnInit {
       // Call the DbService to add the transaction
       await this.dbService.addTransaction(t);
 
-      this.router.navigate(['/tabs/home/transaction-list']); // Navigate to the desired page (e.g., home or dashboard)
+      this.router.navigate(['/']); // Navigate to the desired page (e.g., home or dashboard)
       } else {
       console.error('Form is invalid');
     }
