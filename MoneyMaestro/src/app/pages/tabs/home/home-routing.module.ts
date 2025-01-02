@@ -7,7 +7,7 @@ const routes: Routes = [
   { path: '', component: HomePage },
   {
     path: 'transaction-list',
-    loadChildren: () => import('../../../transaction-list/transaction-list.module').then( m => m.TransactionListPageModule)
+   
   },
   {
     path: 'loan',
@@ -36,7 +36,7 @@ const routes: Routes = [
   },
   {
     path: 'test',
-    loadChildren: () => import('../../../test/test.module').then( m => m.TestPageModule)
+    // loadChildren: () => import('../../../test/test.module').then( m => m.TestPageModule)
   },
 ];
 
