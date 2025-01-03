@@ -6,10 +6,6 @@ import { HomePage } from './home.page';
 const routes: Routes = [
   { path: '', component: HomePage },
   {
-    path: 'transaction-list',
-   
-  },
-  {
     path: 'loan',
     loadChildren: () => import('../../../transaction-form/transaction-form.module').then( m => m.TransactionFormPageModule),
     data: { type: 'Loan' }
@@ -33,11 +29,7 @@ const routes: Routes = [
     path: 'spend',
     loadChildren: () => import('../../../transaction-form/transaction-form.module').then( m => m.TransactionFormPageModule),
     data: { type: 'Spend' }
-  },
-  {
-    path: 'test',
-    // loadChildren: () => import('../../../test/test.module').then( m => m.TestPageModule)
-  },
+  }
 ];
 
 @NgModule({
