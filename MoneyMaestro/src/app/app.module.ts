@@ -11,11 +11,12 @@ import { CommonModule } from '@angular/common';
 import { Contacts } from '@awesome-cordova-plugins/contacts/ngx';
 import { SQLite } from '@ionic-native/sqlite/ngx';
 import { TransactionService } from './services/transaction/transaction.service';
+import { BalanceService } from './services/balance/balance.service';
 
 @NgModule({
   declarations: [AppComponent],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, ReactiveFormsModule, CommonModule],
-  providers: [SQLite, TransactionService, { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, Contacts],
+  providers: [SQLite, TransactionService, BalanceService, { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, Contacts],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
