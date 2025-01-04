@@ -39,12 +39,7 @@ export class HomePage implements OnInit, AfterContentChecked {
 
     this.loadTransactions();
     this.loadBalances();
-    if(this.balances.length === 0) {
-      this.balances = [
-        { id: 1, date: new Date(), time: new Date().toTimeString().split(" ")[0], total: 0, saved: 0, loaned: 0, borrowed: 0, spent: 0, received: 0 },
-      ];
-      this.addBalance(this.balances[0]);
-    }
+    
   }
 
   ngAfterContentChecked() {
@@ -67,10 +62,17 @@ export class HomePage implements OnInit, AfterContentChecked {
   }
 
   async loadBalances() {
+    this.balances = []
     try {
       this.balances = await this.balanceService.getAllBalances();
     } catch (error) {
       console.error('Error loading balances:', error);
+    }
+    if(this.balances.length === 0) {
+      this.balances = [
+        { id: 1, date: new Date(), time: new Date().toTimeString().split(" ")[0], total: 0, saved: 0, loaned: 0, borrowed: 0, spent: 0, received: 0 },
+      ];
+      this.addBalance(this.balances[0]);
     }
   }
 
