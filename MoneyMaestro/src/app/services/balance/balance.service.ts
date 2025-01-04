@@ -96,6 +96,7 @@ export class BalanceService {
   }
 
   async addBalance(balance: {
+    id?: number;
     date: Date;
     time: string;
     total: number;

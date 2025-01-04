@@ -1,5 +1,5 @@
 export interface Balance {
-    id: number; // Primary key
+    id?: number; // Primary key
     date: Date; // Date of the balance
     time: string; // Time of the balance in HH:mm:ss format
     total: number; // Total balance amount
