@@ -1,6 +1,6 @@
 <ion-header class="ion-no-border" translucent>
   <ion-toolbar>
-    <ion-title color="primary" mode="ios">Transactions</ion-title>
+    <ion-title color="primary" mode="ios">Transaction History</ion-title>
   </ion-toolbar>
   <ion-toolbar>
     <ion-segment mode="ios" [value]="segmentValue" (ionChange)="segmentChanged($event)">
@@ -19,22 +19,45 @@
   <ion-list class="transactions" *ngIf="transactions?.length > 0">
     <ion-item-group>
       <ion-item lines="full" *ngFor="let transaction of transactions">
+        <!-- Thumbnail based on transaction type or amount -->
         <ion-thumbnail slot="start" class="ion-text-center">
-          <img [src]="'assets/imgs/' + (transaction?.amount >= 0 ? 'up-right.png' : 'down-left-arrow.png')" />
+          <img 
+            [src]="'assets/imgs/' + 
+            ((transaction?.type === 'Loan' || transaction?.type === 'Spend') 
+              ? 'down-left-arrow.png' 
+              : 'up-right.png')" 
+          />
         </ion-thumbnail>
+        
+        <!-- Transaction details -->
         <ion-label>
-          <ion-text color="primary">{{transaction?.to}}</ion-text>
+          <ion-text>{{ transaction?.type }}</ion-text><br />
+          <ion-text>{{ transaction?.description }}</ion-text>
           <p>
             <ion-text>
-              {{transaction?.date | date: 'MMM d, y'}}
+              {{ transaction?.date | date: 'MMM d, y' }}
+            </ion-text>
+          </p>
+          <p>
+            <ion-text>
+              At {{ transaction?.time }}
+            </ion-text>
+          </p>
+          <p>
+            <ion-text *ngIf="(transaction?.type === 'Loan' || transaction?.type === 'Borrow')">
+              Contact: <br />{{ transaction?.contact }}
             </ion-text>
           </p>
         </ion-label>
-        <ion-text slot="end" color="primary">
-          {{transaction?.amount >= 0 ? '₹' + transaction?.amount : '-₹' + (transaction?.amount * (-1))}}
+        
+        <!-- Transaction amount -->
+        <ion-text slot="end" [color]="(transaction?.type === 'Loan' || transaction?.type === 'Spend') ? 'danger' : 'primary'">
+          {{ transaction?.amount }} FCFA
         </ion-text>
       </ion-item>
     </ion-item-group>
   </ion-list>
+
+  
 
 </ion-content>

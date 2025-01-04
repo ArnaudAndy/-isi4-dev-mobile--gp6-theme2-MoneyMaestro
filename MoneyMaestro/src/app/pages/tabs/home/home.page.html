@@ -20,8 +20,8 @@
         <div align="center">
           <ion-label>
             <span>Total Balance</span>
-            <p class="acc-amt"><ion-text color="white">{{account?.balance}} FCFA</ion-text></p>
-            <span>{{account?.acc_no}}</span>
+            <p class="acc-amt"><ion-text color="white">{{balances[balances.length - 1].total}} FCFA</ion-text></p>
+            <span> On {{ balances[balances.length - 1].date  | date: 'MMM d, y' }}</span>
           </ion-label>
         </div>
       </ng-template>
@@ -44,78 +44,53 @@
   <ion-list class="transactions" *ngIf="transactions?.length > 0">
 
     <ion-list-header>
-      <ion-label color="medium">Transactions</ion-label>
+      <ion-label color="medium">Latest Transactions</ion-label>
     </ion-list-header>
 
+    
+
     <ion-item-group>
-      <ion-item lines="full" *ngFor="let transaction of transactions">
+      <ion-item lines="full" *ngFor="let transaction of transactions  | slice:-5">
+        <!-- Thumbnail based on transaction type or amount -->
         <ion-thumbnail slot="start" class="ion-text-center">
-          <img [src]="'assets/imgs/' + (transaction?.amount >= 0 ? 'up-right.png' : 'down-left-arrow.png')" />
+          <img 
+            [src]="'assets/imgs/' + 
+            ((transaction?.type === 'Loan' || transaction?.type === 'Spend') 
+              ? 'down-left-arrow.png' 
+              : 'up-right.png')" 
+          />
         </ion-thumbnail>
+        
+        <!-- Transaction details -->
         <ion-label>
-          <ion-text>{{transaction?.to}}</ion-text>
+          <ion-text>{{ transaction?.description }}</ion-text>
           <p>
             <ion-text>
-              {{transaction?.date | date: 'MMM d, y'}}
+              {{ transaction?.date | date: 'MMM d, y' }}
+            </ion-text>
+          </p>
+          <p>
+            <ion-text>
+              At {{ transaction?.time }}
+            </ion-text>
+          </p>
+          <p>
+            <ion-text *ngIf="(transaction?.type === 'Loan' || transaction?.type === 'Borrow')">
+              Contact: {{ transaction?.contact }}
             </ion-text>
           </p>
         </ion-label>
-        <ion-text slot="end" color="primary">
-          {{transaction?.amount >= 0 ? transaction?.amount + 'FCFA' : transaction?.amount + 'FCFA'}}
+        
+        <!-- Transaction amount -->
+        <ion-text slot="end" [color]="(transaction?.type === 'Loan' || transaction?.type === 'Spend') ? 'danger' : 'primary'">
+          {{ transaction?.amount }} FCFA
         </ion-text>
       </ion-item>
     </ion-item-group>
+    
 
   </ion-list>
 
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Transaction List</ion-card-title>
-    </ion-card-header>
-
-    <ion-card-content>
-      <!-- Loading State -->
-      <div *ngIf="isLoading" class="loading">
-        <ion-spinner name="lines"></ion-spinner>
-        <p>Loading transactions...</p>
-      </div>
-
-      <!-- No Data State -->
-      <div *ngIf="!isLoading && transactionss.length === 0" class="no-data">
-        <ion-text color="medium">
-          <p>No transactions available.</p>
-        </ion-text>
-      </div>
-
-      <!-- Transaction Table -->
-      <ion-grid *ngIf="!isLoading && transactionss.length > 0" class="transaction-table">
-        <ion-row class="table-header">
-          <ion-col>ID</ion-col>
-          <ion-col>Type</ion-col>
-          <ion-col>Amount</ion-col>
-          <ion-col>Date</ion-col>
-          <ion-col>Time</ion-col>
-          <ion-col>Contact</ion-col>
-          <ion-col>Returned</ion-col>
-          <ion-col>Actions</ion-col>
-        </ion-row>
-
-        <ion-row *ngFor="let transaction of transactionss">
-          <ion-col>{{ transaction.id }}</ion-col>
-          <ion-col>{{ transaction.type }}</ion-col>
-          <ion-col>{{ transaction.amount }}</ion-col>
-          <ion-col>{{ transaction.date | date: 'short' }}</ion-col>
-          <ion-col>{{ transaction.time }}</ion-col>
-          <ion-col>{{ transaction.contact }}</ion-col>
-          <ion-col>{{ transaction.isReturned ? 'Yes' : 'No' }}</ion-col>
-          <ion-col>
-            <ion-button size="small" color="primary" (click)="viewTransaction(transaction.id)">
-              View
-            </ion-button>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-    </ion-card-content>
-  </ion-card>
+  
 
 </ion-content>

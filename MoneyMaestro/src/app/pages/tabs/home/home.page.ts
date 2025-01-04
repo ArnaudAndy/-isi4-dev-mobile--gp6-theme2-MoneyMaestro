@@ -1,5 +1,7 @@
 import { AfterContentChecked, Component, OnInit } from '@angular/core';
+import { Balance } from 'src/app/models/balance/balance';
 import { Transaction } from 'src/app/models/transaction/transaction';
+import { BalanceService } from 'src/app/services/balance/balance.service';
 import { TransactionService } from 'src/app/services/transaction/transaction.service';
 import SwiperCore, { SwiperOptions, Pagination } from 'swiper';
 // install Swiper modules
@@ -11,17 +13,19 @@ SwiperCore.use([Pagination]);
   styleUrls: ['./home.page.scss'],
 })
 export class HomePage implements OnInit, AfterContentChecked {
-  transactionss: Transaction[] = []; // Replace with your Transaction interface if needed
-  isLoading: boolean = true;
+  transactions: Transaction[] = []; // Replace with your Transaction interface if needed
+  balances: Balance[] = []; // Replace with your Balance interface if needed
   accounts: any[] = [];
   bannerConfig: SwiperOptions;
   featureConfig: SwiperOptions;
   features: any[] = [];
-  transactions: any[] = [];
 
-  constructor(private dbService: TransactionService) { }
+  constructor(private dbService: TransactionService, private balanceService: BalanceService) { }
 
   ngOnInit() {
+    this.balances = [
+      { id: 1, date: new Date(), time: '12:00:00', total: 200000, saved: 10000, loaned: 0, borrowed: 0, spent: 0, received: 0 },
+    ];
     this.accounts = [
       { id: 1, acc_no: ' ', balance: '200000' },
     ];
@@ -32,15 +36,15 @@ export class HomePage implements OnInit, AfterContentChecked {
       { id: 4, color: 'light', icon: 'newspaper', name: 'Save', path: 'save' },
       { id: 5, color: 'warning', icon: 'card', name: 'Spend', path: 'spend' },
     ];
-    this.transactions = [
-      { id: 1, to: 'Piyush Ag.', date: '2022-05-22', amount: 5000 },
-      { id: 2, to: 'Avinash', date: '2022-03-02', amount: 7000 },
-      { id: 3, to: 'Catherine', date: '2022-07-28', amount: -3250 },
-      { id: 4, to: 'Akhil Ag.', date: '2022-01-09', amount: 1000 },
-      { id: 5, to: 'Prem Ag.', date: '2022-04-13', amount: -800 },
-    ];
 
     this.loadTransactions();
+    // this.loadBalances();
+    // if(this.balances.length === 0) {
+    //   this.balances = [
+    //     { id: 1, date: new Date(), time: new Date().toTimeString().split(" ")[0], total: 0, saved: 0, loaned: 0, borrowed: 0, spent: 0, received: 0 },
+    //   ];
+    //   this.addBalance(this.balances[0]);
+    // }
   }
 
   ngAfterContentChecked() {
@@ -56,11 +60,28 @@ export class HomePage implements OnInit, AfterContentChecked {
   // Fetch transactions from the DbService
   async loadTransactions() {
     try {
-      this.transactionss = await this.dbService.getAllTransactions();
+      this.transactions = await this.dbService.getAllTransactions();
     } catch (error) {
       console.error('Error loading transactions:', error);
     }
-    this.isLoading = false;
+  }
+
+  async loadBalances() {
+    try {
+      this.balances = await this.balanceService.getAllBalances();
+    } catch (error) {
+      console.error('Error loading balances:', error);
+    }
+  }
+
+  async addBalance(balance: Balance) {
+    try {
+      await this.balanceService.addBalance(balance);
+      this.loadBalances();
+    } catch (error) {
+      console.error('Error adding balance:', error);
+    }
+
   }
 
   // View details of a transaction
