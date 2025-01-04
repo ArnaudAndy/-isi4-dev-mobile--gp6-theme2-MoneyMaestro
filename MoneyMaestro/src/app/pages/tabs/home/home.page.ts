@@ -62,7 +62,6 @@ export class HomePage implements OnInit, AfterContentChecked {
   }
 
   async loadBalances() {
-    this.balances = []
     try {
       this.balances = await this.balanceService.getAllBalances();
     } catch (error) {
@@ -79,11 +78,9 @@ export class HomePage implements OnInit, AfterContentChecked {
   async addBalance(balance: Balance) {
     try {
       await this.balanceService.addBalance(balance);
-      this.loadBalances();
     } catch (error) {
       console.error('Error adding balance:', error);
     }
-
   }
 
   // View details of a transaction

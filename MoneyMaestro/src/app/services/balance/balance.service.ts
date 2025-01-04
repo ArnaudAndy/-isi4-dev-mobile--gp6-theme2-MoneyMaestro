@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { SQLite, SQLiteObject } from "@ionic-native/sqlite/ngx";
+import { Balance } from "src/app/models/balance/balance";
 
 @Injectable({
   providedIn: "root",
@@ -10,7 +11,7 @@ export class BalanceService {
   constructor(private sqlite: SQLite) {}
 
   async getAllBalances() {
-    let balances: any[] = [];
+    let balances: Balance[] = [];
     return this.sqlite
       .create({ name: "data.db", location: "default" })
       .then((db) => {
@@ -38,8 +39,8 @@ export class BalanceService {
       });
   }
 
-  private getAllRecords(): any[] {
-    let balances: any[] = [];
+  private getAllRecords(): Balance[] {
+    let balances: Balance[] = [];
     this.dbInstance
       .executeSql("SELECT * FROM BALANCES", [])
       .then((res) => {
@@ -95,17 +96,7 @@ export class BalanceService {
       });
   }
 
-  async addBalance(balance: {
-    id?: number;
-    date: Date;
-    time: string;
-    total: number;
-    saved: number;
-    loaned: number;
-    borrowed: number;
-    spent: number;
-    received: number;
-  }) {
+  async addBalance(balance: Balance) {
     this.dbInstance
       .executeSql(
         `INSERT INTO BALANCES (date, time, total, saved, loaned, borrowed, spent, received) 
@@ -125,17 +116,7 @@ export class BalanceService {
     return this.getAllRecords();
   }
 
-  async updateBalance(balance: {
-    id: number;
-    date: Date;
-    time: string;
-    total: number;
-    saved: number;
-    loaned: number;
-    borrowed: number;
-    spent: number;
-    received: number;
-  }) {
+  async updateBalance(balance: Balance) {
     this.dbInstance
       .executeSql(
         `UPDATE BALANCES 
