@@ -58,41 +58,9 @@ export class TransactionFormPage implements OnInit {
         contact: formValue.contact,
         isReturned: formValue.isReturned,
       };
+      
       // Call the DbService to add the transaction
       await this.dbService.addTransaction(t);
-
-      // Update the balances
-      let balance = this.balances[this.balances.length - 1];
-
-      balance.date = t.date;
-      balance.time = t.time;
-
-      if (this.transactionType === 'Loan') {
-        balance.loaned += t.amount;
-        balance.total -= t.amount;
-      }
-
-      if (this.transactionType === 'Borrow') {
-        balance.borrowed += t.amount;
-        balance.total += t.amount;
-      }
-
-      if (this.transactionType === 'Spend') {
-        balance.spent += t.amount;
-        balance.total -= t.amount;
-      }
-
-      if (this.transactionType === 'Save') {
-        balance.saved += t.amount;
-        balance.total -= t.amount;
-      }
-
-      if (this.transactionType === 'Top-up') {
-        balance.received += t.amount;
-        balance.total += t.amount;
-      }
-
-      await this.balanceService.addBalance(balance)
 
       await this.dbService.getAllTransactions()
 

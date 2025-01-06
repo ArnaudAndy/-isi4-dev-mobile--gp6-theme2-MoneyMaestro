@@ -38,8 +38,8 @@ export class HomePage implements OnInit, AfterContentChecked {
     ];
 
     this.loadTransactions();
+
     this.loadBalances();
-    
   }
 
   ngAfterContentChecked() {
@@ -67,17 +67,12 @@ export class HomePage implements OnInit, AfterContentChecked {
     } catch (error) {
       console.error('Error loading balances:', error);
     }
-    if(this.balances.length === 0) {
-      this.balances = [
-        { id: 1, date: new Date(), time: new Date().toTimeString().split(" ")[0], total: 0, saved: 0, loaned: 0, borrowed: 0, spent: 0, received: 0 },
-      ];
-      this.addBalance(this.balances[0]);
-    }
   }
 
   async addBalance(balance: Balance) {
     try {
-      await this.balanceService.addBalance(balance);
+      let abalance = await this.balanceService.addBalance(balance);
+      this.balances = abalance;
     } catch (error) {
       console.error('Error adding balance:', error);
     }
@@ -86,6 +81,6 @@ export class HomePage implements OnInit, AfterContentChecked {
   // View details of a transaction
   async viewTransaction(transactionId: number) {
     console.log('View transaction:', transactionId);
-    // Navigate to a transaction detail page if necessary
+    // Navigate to a transaction detail page 
   }
 }

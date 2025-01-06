@@ -20,8 +20,8 @@
         <div align="center">
           <ion-label>
             <span>Total Balance</span>
-            <p class="acc-amt"><ion-text color="white">{{balances[balances.length - 1].total}} FCFA</ion-text></p>
-            <span> On {{ balances[balances.length - 1].date  | date: 'MMM d, y' }}</span>
+            <p class="acc-amt"><ion-text color="white">{{ balances[balances.length - 1]?.total }} FCFA</ion-text></p>
+            <span> On {{ balances[balances.length - 1]?.date  | date: 'MMM d, y' }}</span>
           </ion-label>
         </div>
       </ng-template>
@@ -35,7 +35,7 @@
           <ion-button slot="icon-only" [color]="feature?.color" [routerLink]="feature?.path">
             <ion-icon [name]="feature?.icon"></ion-icon>
           </ion-button>
-          <ion-label>{{feature?.name}}</ion-label>
+          <ion-label>{{ feature?.name }}</ion-label>
         </div>
       </ng-template>
     </swiper>
@@ -63,7 +63,7 @@
         
         <!-- Transaction details -->
         <ion-label>
-          <ion-text color="secondary-contrast">{{ transaction?.description }}</ion-text>
+          <ion-text>{{ transaction?.description }}</ion-text>
           <p>
             <ion-text>
               {{ transaction?.date | date: 'MMM d, y' }}

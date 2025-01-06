@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { SQLite, SQLiteObject } from "@ionic-native/sqlite/ngx";
 import { Balance } from "src/app/models/balance/balance";
+import { Transaction } from "src/app/models/transaction/transaction";
 
 @Injectable({
   providedIn: "root",
@@ -13,7 +14,7 @@ export class BalanceService {
   async getAllBalances() {
     let balances: Balance[] = [];
     return this.sqlite
-      .create({ name: "data.db", location: "default" })
+      .create({ name: "balance.db", location: "default" })
       .then((db) => {
         this.dbInstance = db;
         db.executeSql(
@@ -35,6 +36,22 @@ export class BalanceService {
       .catch()
       .then((e) => {
         console.error("Error initializing database: ", e);
+        if (balances.length === 0) {
+          balances = [
+            {
+              id: 1,
+              date: new Date(),
+              time: new Date().toTimeString().split(" ")[0],
+              total: 0,
+              saved: 0,
+              loaned: 0,
+              borrowed: 0,
+              spent: 0,
+              received: 0,
+            },
+          ];
+          this.addBalance(balances[0]);
+        }
         return balances;
       });
   }
@@ -67,7 +84,7 @@ export class BalanceService {
 
   async getBalanceById(id: number) {
     return this.sqlite
-      .create({ name: "data.db", location: "default" })
+      .create({ name: "balance.db", location: "default" })
       .then((db) => {
         this.dbInstance = db;
         return db.executeSql("SELECT * FROM BALANCES WHERE id = ?", [id]);
@@ -97,6 +114,59 @@ export class BalanceService {
   }
 
   async addBalance(balance: Balance) {
+    this.dbInstance
+      .executeSql(
+        `INSERT INTO BALANCES (date, time, total, saved, loaned, borrowed, spent, received) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          balance.date.toISOString().split("T")[0],
+          balance.time,
+          balance.total,
+          balance.saved,
+          balance.loaned,
+          balance.borrowed,
+          balance.spent,
+          balance.received,
+        ]
+      )
+      .catch((e) => console.error("Error adding balance: ", e));
+    return this.getAllRecords();
+  }
+  async addBalanceWithTransaction(t: Transaction) {
+    let balances: Balance[] = []
+    this.getAllBalances().then((b) => {
+      balances = b;
+    });
+
+    let balance: Balance = balances[balances.length - 1];
+    balance.date = t.date;
+    balance.time = t.time;
+
+    if (t.type === "Loan") {
+      balance.loaned += t.amount;
+      balance.total -= t.amount;
+    }
+
+    if (t.type === "Borrow") {
+      balance.borrowed += t.amount;
+      balance.total += t.amount;
+    }
+
+    if (t.type === "Spend") {
+      balance.spent += t.amount;
+      balance.total -= t.amount;
+    }
+
+    if (t.type === "Save") {
+      balance.saved += t.amount;
+      balance.total -= t.amount;
+    }
+
+    if (t.type === "Top-up") {
+      balance.received += t.amount;
+      balance.total += t.amount;
+    }
+
     this.dbInstance
       .executeSql(
         `INSERT INTO BALANCES (date, time, total, saved, loaned, borrowed, spent, received) 
