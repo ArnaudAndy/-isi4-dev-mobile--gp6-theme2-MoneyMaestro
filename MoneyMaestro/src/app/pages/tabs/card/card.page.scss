@@ -54,3 +54,24 @@ ion-content {
         }
     }
 }
+.dashboard-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 1rem;
+  
+    .chart-section {
+      text-align: center;
+  
+      h2 {
+        margin-bottom: 1rem;
+        color: #333;
+      }
+  
+      canvas {
+        max-width: 100%;
+        margin: 0 auto;
+      }
+    }
+  }
+  

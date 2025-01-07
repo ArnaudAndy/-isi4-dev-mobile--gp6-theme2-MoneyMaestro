@@ -4,7 +4,46 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content color="primary">
+<ion-content>
+
+  <div class="dashboard-container">
+    <!-- Aggregated Data Doughnut Chart -->
+    <div class="chart-section">
+      <h2>Données Agrégées</h2>
+      <canvas
+        baseChart
+        [data]="doughnutChartData"
+        [options]="doughnutChartOptions"
+        [type]="doughnutChartType">
+      </canvas>
+    </div>
+  
+    <!-- Weekly Data Bar Chart -->
+    <div class="chart-section">
+      <h2>Données Hebdomadaires</h2>
+      <canvas
+        baseChart
+        [data]="weeklyBarChartData"
+        [options]="weeklyBarChartOptions"
+        [type]="weeklyBarChartType">
+      </canvas>
+    </div>
+  
+    <!-- Daily Data Line Chart -->
+    <div class="chart-section">
+      <h2>Données Journalières</h2>
+      <canvas
+        baseChart
+        [data]="dailyLineChartData"
+        [options]="dailyLineChartOptions"
+        [type]="dailyLineChartType">
+      </canvas>
+    </div>
+  </div>
+  
+</ion-content>
+
+<!-- <ion-content color="primary">
 
   <div class="bg_circle"></div>
 
@@ -47,4 +86,5 @@
     
   </ion-list>
 
-</ion-content>
+</ion-content> -->
+

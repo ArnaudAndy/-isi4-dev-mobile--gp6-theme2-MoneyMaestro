@@ -7,4 +7,15 @@
     display: block;
     margin: 0 auto;
   }
+  canvas {
+    width: 100% !important;
+    height: 250px !important;
+  }
+  
+  .no-data-message {
+    text-align: center;
+    padding: 20px;
+    font-size: 16px;
+    color: #888;
+  }
   

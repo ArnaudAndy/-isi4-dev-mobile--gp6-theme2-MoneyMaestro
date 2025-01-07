@@ -1,20 +1,43 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>analytics</ion-title>
+    <ion-title>Analytics</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <div class="chart-container">
-    <h2>Transactions Hebdomadaires</h2>
-    <canvas id="weeklyChart"></canvas>
+<ion-content color="secondary" fullscreen>
+  <div class="chart-container" *ngIf="isDataAvailable; else noDataTemplate">
+    <h2>Transactions Analysis</h2>
+    <canvas id="doughnutChart"></canvas> <!-- Doughnut Chart Canvas -->
   </div>
-  
-  <div class="chart-container">
-    <h2>Transactions Journalières (par heure)</h2>
-    <canvas id="dailyChart"></canvas>
-  </div>
-  
-  
 
+  <ng-template #noDataTemplate>
+    <div class="no-data-message">
+      <h2>No data available for the selected filters.</h2>
+    </div>
+  </ng-template>
+
+  <!-- Form Controls -->
+  <form [formGroup]="form" (ngSubmit)="updateChart()">
+    <ion-item>
+      <ion-label>Operation Type</ion-label>
+      <ion-select formControlName="operationType">
+        <ion-select-option value="">All</ion-select-option>
+        <ion-select-option value="expenditure">Expenditure</ion-select-option>
+        <ion-select-option value="inflow">Inflow</ion-select-option>
+        <ion-select-option value="borrowing">Borrowing</ion-select-option>
+        <ion-select-option value="loan">Loan</ion-select-option>
+        <ion-select-option value="saving">Saving</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Data Period</ion-label>
+      <ion-select formControlName="dataPeriod">
+        <ion-select-option value="day">Day</ion-select-option>
+        <ion-select-option value="week">Week</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-button expand="full" type="submit">Update Chart</ion-button>
+  </form>
 </ion-content>
