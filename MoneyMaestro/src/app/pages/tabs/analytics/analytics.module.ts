@@ -7,13 +7,14 @@ import { IonicModule } from '@ionic/angular';
 import { AnalyticsPageRoutingModule } from './analytics-routing.module';
 
 import { AnalyticsPage } from './analytics.page';
-
+import { ReactiveFormsModule } from '@angular/forms';
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    AnalyticsPageRoutingModule
+    AnalyticsPageRoutingModule,
+    ReactiveFormsModule
   ],
   declarations: [AnalyticsPage]
 })

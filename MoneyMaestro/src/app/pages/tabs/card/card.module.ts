@@ -8,6 +8,8 @@ import { IonicModule } from '@ionic/angular';
 import { CardPageRoutingModule } from './card-routing.module';
 
 import { CardPage } from './card.page';
+import { NgChartsModule } from 'ng2-charts';
+
 
 @NgModule({
   imports: [
@@ -15,7 +17,9 @@ import { CardPage } from './card.page';
     FormsModule,
     IonicModule,
     CardPageRoutingModule,
-    SwiperModule
+    SwiperModule,
+    NgChartsModule
+  
   ],
   declarations: [CardPage]
 })
