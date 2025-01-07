@@ -71,8 +71,7 @@ export class HomePage implements OnInit, AfterContentChecked {
 
   async addBalance(balance: Balance) {
     try {
-      let abalance = await this.balanceService.addBalance(balance);
-      this.balances = abalance;
+      this.balances = await this.balanceService.addBalance(balance);
     } catch (error) {
       console.error('Error adding balance:', error);
     }

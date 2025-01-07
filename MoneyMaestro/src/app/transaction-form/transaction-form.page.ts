@@ -58,14 +58,19 @@ export class TransactionFormPage implements OnInit {
         contact: formValue.contact,
         isReturned: formValue.isReturned,
       };
+      try {
+        // Call the DbService to add the transaction
+        await this.dbService.addTransaction(t);
+
+        // Update the balances
+        await this.balanceService.addBalanceWithTransaction(t)
+
+        this.router.navigate(['/']); // Navigate to the desired page (e.g., home or dashboard)
+      } catch (error) {
+        console.error('Error adding transaction:', error);
+      }
       
-      // Call the DbService to add the transaction
-      await this.dbService.addTransaction(t);
-
-      await this.dbService.getAllTransactions()
-
-      this.router.navigate(['/']); // Navigate to the desired page (e.g., home or dashboard)
-      } else {
+    } else {
       console.error('Form is invalid');
     }
   }
