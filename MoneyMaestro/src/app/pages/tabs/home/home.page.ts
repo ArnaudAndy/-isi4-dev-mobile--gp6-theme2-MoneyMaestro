@@ -39,7 +39,9 @@ export class HomePage implements OnInit, AfterContentChecked {
 
     this.loadTransactions();
 
-    this.loadBalances();
+    // this.loadBalances();
+
+    this.localLoadBalances();
   }
 
   ngAfterContentChecked() {
@@ -66,6 +68,17 @@ export class HomePage implements OnInit, AfterContentChecked {
       this.balances = await this.balanceService.getAllBalances();
     } catch (error) {
       console.error('Error loading balances:', error);
+    }
+  }
+
+  localLoadBalances() {
+    let test = localStorage.getItem('balances');
+    this.balances = [
+      { id: 1, date: new Date(), time: new Date().toTimeString().split(" ")[0], total: 0, saved: 0, loaned: 0, borrowed: 0, spent: 0, received: 0 },
+    ];
+    if (test) {
+      this.balances = JSON.parse(test);
+      console.log(this.balances);
     }
   }
 

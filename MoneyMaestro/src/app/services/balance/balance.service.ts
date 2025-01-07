@@ -28,25 +28,30 @@ export class BalanceService {
             borrowed DECIMAL(10, 2) NOT NULL,
             spent DECIMAL(10, 2) NOT NULL,
             received DECIMAL(10, 2) NOT NULL
-          );
-          INSERT INTO BALANCES (date, time, total, saved, loaned, borrowed, spent, received) 
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-          [
-            new Date().toISOString().split("T")[0],
-            new Date().toTimeString().split(" ")[0],
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-          ]
+          )`,
+          []
         ).catch((e) => console.error("Error creating BALANCES table: ", e));
         balances = this.getAllRecords();
       })
       .catch()
       .then((e) => {
         console.error("Error initializing database: ", e);
+        if (balances.length === 0) {
+          balances = [
+            {
+              id: 1,
+              date: new Date(),
+              time: new Date().toTimeString().split(" ")[0],
+              total: 0,
+              saved: 0,
+              loaned: 0,
+              borrowed: 0,
+              spent: 0,
+              received: 0,
+            },
+          ];
+          this.addBalance(balances[0]);
+        }
         return balances;
       });
   }

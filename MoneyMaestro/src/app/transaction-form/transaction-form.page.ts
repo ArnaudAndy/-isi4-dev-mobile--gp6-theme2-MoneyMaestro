@@ -34,7 +34,9 @@ export class TransactionFormPage implements OnInit {
       isReturned: [false],
     });
 
-    this.loadBalances();
+    // this.loadBalances();
+
+    this.localLoadBalances();
   }
 
   // Load form fields dynamically based on the type
@@ -60,10 +62,12 @@ export class TransactionFormPage implements OnInit {
       };
       try {
         // Call the DbService to add the transaction
-        await this.dbService.addTransaction(t);
+        // await this.dbService.addTransaction(t);
 
         // Update the balances
-        await this.balanceService.addBalanceWithTransaction(t)
+        // await this.balanceService.addBalanceWithTransaction(t)
+
+        this.addBalance(t)
 
         this.router.navigate(['/']); // Navigate to the desired page (e.g., home or dashboard)
       } catch (error) {
@@ -81,6 +85,45 @@ export class TransactionFormPage implements OnInit {
     } catch (error) {
       console.error('Error loading balances:', error);
     }
+  }
+
+  localLoadBalances() {
+    let test = localStorage.getItem('balances');
+    this.balances = [
+      { id: 1, date: new Date(), time: new Date().toTimeString().split(' ')[0], total: 0, saved: 0, loaned: 0, borrowed: 0, spent: 0, received: 0 },
+    ];
+    if (test) {
+      this.balances = JSON.parse(test);
+    }
+  }
+
+  addBalance(t: Transaction){
+    let n : number = this.balances.length;
+    var balance: Balance = this.balances[n - 1];
+    balance.date = t.date;
+    balance.time = t.time;
+
+    if (t.type === 'Loan') {
+      balance.loaned += t.amount;
+      balance.total -= t.amount;
+    }
+
+    if (t.type === 'Borrow') {
+      balance.borrowed += t.amount;
+      balance.total += t.amount;
+    }
+
+    if (t.type === 'Spend') {
+      balance.spent += t.amount;
+    }
+
+    if (t.type === 'Receive') {
+      balance.received += t.amount;
+    }
+
+    this.balances.push(balance);
+
+    localStorage.setItem('balances', JSON.stringify(this.balances));
   }
 
   async cancel() {
