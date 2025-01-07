@@ -1,7 +1,7 @@
 .md {
     ion-segment {
         width: 60%;
-        margin: auto;
+        
     }
 }
 
@@ -23,3 +23,25 @@ ion-content {
         margin-top: 2rem;
     }
 }
+ion-toolbar {
+    display: flex;
+    align-items: center;
+  
+    .icon-buttons {
+      display: flex;
+      gap: 1px; /* Adjust the spacing between icons */
+      padding-right: 8px; /* Adjust spacing from the toolbar edge */
+    }
+  
+    ion-button {
+      padding: 0; /* Remove extra padding from buttons */
+      margin: 0; /* Remove extra margins */
+      height: 40px; /* Adjust button size */
+      width: 40px; /* Adjust button size */
+    }
+  
+    ion-icon {
+      font-size: 20px; /* Adjust icon size */
+    }
+  }
+  

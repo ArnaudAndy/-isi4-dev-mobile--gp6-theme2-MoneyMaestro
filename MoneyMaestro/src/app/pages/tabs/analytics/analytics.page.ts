@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Chart } from 'chart.js';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Transaction } from 'src/app/models/transaction/transaction'; // Import Transaction model
 
 @Component({
   selector: 'app-analytics',
@@ -8,10 +9,10 @@ import { FormBuilder, FormGroup } from '@angular/forms';
   styleUrls: ['./analytics.page.scss'],
 })
 export class AnalyticsPage implements OnInit {
-  form: FormGroup;  // Form group for the form control
+  form: FormGroup; // Form group for the form control
   doughnutChart: any;
-  transactions: any[] = [];  // Array to store transactions
-  isDataAvailable: boolean = true;  // Flag to track data availability
+  transactions: Transaction[] = []; // Updated to use Transaction model
+  isDataAvailable: boolean = true; // Flag to track data availability
 
   constructor(private formBuilder: FormBuilder) {}
 
@@ -19,19 +20,51 @@ export class AnalyticsPage implements OnInit {
     // Initialize the form group
     this.form = this.formBuilder.group({
       operationType: [''], // For selecting expenditure, inflow, etc.
-      dataPeriod: [''],     // For selecting day or week
+      dataPeriod: [''], // For selecting day or week
     });
 
     // Mock transaction data (for testing purposes)
     this.transactions = [
-      { date: '2025-01-01', type: 'expenditure', amount: 100 },
-      { date: '2025-01-01', type: 'inflow', amount: 200 },
-      { date: '2025-01-02', type: 'expenditure', amount: 50 },
-      { date: '2025-01-02', type: 'inflow', amount: 150 },
-      { date: '2025-01-03', type: 'borrowing', amount: 500 },
-      { date: '2025-01-03', type: 'loan', amount: 300 },
-      { date: '2025-01-04', type: 'saving', amount: 200 },
-      { date: '2025-01-04', type: 'inflow', amount: 100 },
+      {
+        id: 1,
+        description: 'Groceries',
+        type: 'Spend',
+        amount: 100,
+        date: new Date('2025-01-01'),
+        time: '14:30',
+        contact: 'Supermarket',
+        isReturned: false,
+      },
+      {
+        id: 2,
+        description: 'Salary',
+        type: 'Top-up',
+        amount: 2000,
+        date: new Date('2025-01-01'),
+        time: '09:00',
+        contact: 'Employer',
+        isReturned: false,
+      },
+      {
+        id: 3,
+        description: 'Loan Payment',
+        type: 'Loan',
+        amount: 500,
+        date: new Date('2025-01-02'),
+        time: '10:00',
+        contact: 'Bank',
+        isReturned: true,
+      },
+      {
+        id: 4,
+        description: 'Savings',
+        type: 'Save',
+        amount: 300,
+        date: new Date('2025-01-03'),
+        time: '12:00',
+        contact: 'Savings Account',
+        isReturned: false,
+      },
     ];
 
     // Generate data for the doughnut chart based on selected values
@@ -45,10 +78,10 @@ export class AnalyticsPage implements OnInit {
 
     let filteredTransactions = this.transactions;
 
-    // Filter transactions by operation type (expenditure, inflow, etc.)
+    // Filter transactions by operation type
     if (selectedOperationType) {
       filteredTransactions = filteredTransactions.filter(
-        (txn) => txn.type === selectedOperationType
+        (txn) => txn.type.toLowerCase() === selectedOperationType.toLowerCase()
       );
     }
 
@@ -71,7 +104,7 @@ export class AnalyticsPage implements OnInit {
   }
 
   // Group transactions by week
-  groupByWeek(transactions: any[]): { labels: string[]; data: number[] } {
+  groupByWeek(transactions: Transaction[]): { labels: string[]; data: number[] } {
     const grouped: { [key: string]: number } = {};
 
     transactions.forEach((txn) => {
@@ -90,7 +123,7 @@ export class AnalyticsPage implements OnInit {
   }
 
   // Group transactions by day
-  groupByDay(transactions: any[]): { labels: string[]; data: number[] } {
+  groupByDay(transactions: Transaction[]): { labels: string[]; data: number[] } {
     const grouped: { [key: string]: number } = {};
 
     transactions.forEach((txn) => {
@@ -114,7 +147,7 @@ export class AnalyticsPage implements OnInit {
     }
 
     this.doughnutChart = new Chart(ctx, {
-      type: 'doughnut', // Change the type to 'doughnut'
+      type: 'doughnut', // Doughnut chart type
       data: {
         labels: labels, // Labels for the segments
         datasets: [

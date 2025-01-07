@@ -11,15 +11,24 @@
         <ion-label>Out-flow</ion-label>
       </ion-segment-button>
     </ion-segment>
+    <ion-buttons slot="end" class="icon-buttons">
+      <ion-button fill="clear" (click)="exportToJSON()">
+        <ion-icon name="download-outline"></ion-icon>
+      </ion-button>
+      <!-- <ion-button fill="clear" (click)="authenticate()">
+        <ion-icon name="cloud-upload-outline"></ion-icon>
+      </ion-button>
+      <ion-button fill="clear" (click)="importFromGoogleDrive()">
+        <ion-icon name="cloud-download-outline"></ion-icon>
+      </ion-button> -->
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content color="secondary" fullscreen>
-
   <ion-list class="transactions" *ngIf="transactions?.length > 0">
     <ion-item-group>
       <ion-item lines="full" *ngFor="let transaction of transactions">
-        <!-- Thumbnail based on transaction type or amount -->
         <ion-thumbnail slot="start" class="ion-text-center">
           <img 
             [src]="'assets/imgs/' + 
@@ -28,8 +37,7 @@
               : 'up-right.png')" 
           />
         </ion-thumbnail>
-        
-        <!-- Transaction details -->
+
         <ion-label>
           <ion-text>{{ transaction?.type }}</ion-text><br />
           <ion-text>{{ transaction?.description }}</ion-text>
@@ -49,13 +57,11 @@
             </ion-text>
           </p>
         </ion-label>
-        
-        <!-- Transaction amount -->
+
         <ion-text slot="end" [color]="(transaction?.type === 'Loan' || transaction?.type === 'Spend') ? 'danger' : 'primary'">
           {{ transaction?.amount }} FCFA
         </ion-text>
       </ion-item>
     </ion-item-group>
   </ion-list>
-
 </ion-content>
