@@ -69,14 +69,6 @@ export class HomePage implements OnInit, AfterContentChecked {
     }
   }
 
-  async addBalance(balance: Balance) {
-    try {
-      this.balances = await this.balanceService.addBalance(balance);
-    } catch (error) {
-      console.error('Error adding balance:', error);
-    }
-  }
-
   // View details of a transaction
   async viewTransaction(transactionId: number) {
     console.log('View transaction:', transactionId);
