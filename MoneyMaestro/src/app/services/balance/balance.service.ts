@@ -14,7 +14,7 @@ export class BalanceService {
   async getAllBalances() {
     let balances: Balance[] = [];
     return this.sqlite
-      .create({ name: "balance.db", location: "default" })
+      .create({ name: "data.db", location: "default" })
       .then((db) => {
         this.dbInstance = db;
         db.executeSql(
@@ -84,7 +84,7 @@ export class BalanceService {
 
   async getBalanceById(id: number) {
     return this.sqlite
-      .create({ name: "balance.db", location: "default" })
+      .create({ name: "data.db", location: "default" })
       .then((db) => {
         this.dbInstance = db;
         return db.executeSql("SELECT * FROM BALANCES WHERE id = ?", [id]);
@@ -133,12 +133,10 @@ export class BalanceService {
     return this.getAllRecords();
   }
   async addBalanceWithTransaction(t: Transaction) {
-    let balances: Balance[] = []
-    this.getAllBalances().then((b) => {
-      balances = b;
-    });
+    let balances: Balance[] = await this.getAllBalances()
+    let n : number = balances.length;
 
-    let balance: Balance = balances[balances.length - 1];
+    let balance: Balance = balances[n - 1];
     balance.date = t.date;
     balance.time = t.time;
 
