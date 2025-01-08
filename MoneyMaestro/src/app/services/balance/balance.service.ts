@@ -37,20 +37,18 @@ export class BalanceService {
       .then((e) => {
         console.error("Error initializing database: ", e);
         if (balances.length === 0) {
-          balances = [
-            {
-              id: 1,
-              date: new Date(),
-              time: new Date().toTimeString().split(" ")[0],
-              total: 0,
-              saved: 0,
-              loaned: 0,
-              borrowed: 0,
-              spent: 0,
-              received: 0,
-            },
-          ];
-          this.addBalance(balances[0]);
+          this.addBalance({
+            id: 1,
+            date: new Date(),
+            time: new Date().toTimeString().split(" ")[0],
+            total: 0,
+            saved: 0,
+            loaned: 0,
+            borrowed: 0,
+            spent: 0,
+            received: 0,
+          });
+          balances = this.getAllRecords();
         }
         return balances;
       });
@@ -132,52 +130,51 @@ export class BalanceService {
       .catch((e) => console.error("Error adding balance: ", e));
     return this.getAllRecords();
   }
-  async addBalanceWithTransaction(t: Transaction) {
-    let balances: Balance[] = await this.getAllBalances()
-    let n : number = balances.length;
+  async addBalanceWithTransaction(transaction: Transaction) {
+    let balances: Balance[] = this.getAllRecords();
+    // Clone the last balance
+    const lastBalance = { ...balances[balances.length - 1] };
 
-    let balance: Balance = balances[n - 1];
-    balance.date = t.date;
-    balance.time = t.time;
+    // Update the balance based on the transaction
+    lastBalance.date = transaction.date;
+    lastBalance.time = transaction.time;
 
-    if (t.type === "Loan") {
-      balance.loaned += t.amount;
-      balance.total -= t.amount;
+    switch (transaction.type) {
+      case 'Loan':
+        lastBalance.loaned += transaction.amount;
+        lastBalance.total -= transaction.amount;
+        break;
+      case 'Borrow':
+        lastBalance.borrowed += transaction.amount;
+        lastBalance.total += transaction.amount;
+        break;
+      case 'Spend':
+        lastBalance.spent += transaction.amount;
+        lastBalance.total -= transaction.amount;
+        break;
+      case 'Top-up':
+        lastBalance.received += transaction.amount;
+        lastBalance.total += transaction.amount;
+        break;
+      case 'Save':
+        lastBalance.saved += transaction.amount;
+        lastBalance.total -= transaction.amount;
+        break;
     }
-
-    if (t.type === "Borrow") {
-      balance.borrowed += t.amount;
-      balance.total += t.amount;
-    }
-
-    if (t.type === "Spend") {
-      balance.spent += t.amount;
-      balance.total -= t.amount;
-    }
-
-    if (t.type === "Save") {
-      balance.saved += t.amount;
-      balance.total -= t.amount;
-    }
-
-    if (t.type === "Top-up") {
-      balance.received += t.amount;
-      balance.total += t.amount;
-    }
-
+    
     this.dbInstance
       .executeSql(
         `INSERT INTO BALANCES (date, time, total, saved, loaned, borrowed, spent, received) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
         [
-          balance.date.toISOString().split("T")[0],
-          balance.time,
-          balance.total,
-          balance.saved,
-          balance.loaned,
-          balance.borrowed,
-          balance.spent,
-          balance.received,
+          lastBalance.date.toISOString().split("T")[0],
+          lastBalance.time,
+          lastBalance.total,
+          lastBalance.saved,
+          lastBalance.loaned,
+          lastBalance.borrowed,
+          lastBalance.spent,
+          lastBalance.received,
         ]
       )
       .catch((e) => console.error("Error adding balance: ", e));

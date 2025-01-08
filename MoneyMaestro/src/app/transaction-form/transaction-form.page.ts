@@ -16,7 +16,13 @@ export class TransactionFormPage implements OnInit {
   transactionType: string = ''; // Will hold the type of transaction (Loan, Borrow, etc.)
   balances: Balance[] = [];
 
-  constructor(private balanceService: BalanceService, private fb: FormBuilder, private route: ActivatedRoute, private router: Router, private dbService: TransactionService) {}
+  constructor(
+    private balanceService: BalanceService,
+    private fb: FormBuilder,
+    private route: ActivatedRoute,
+    private router: Router,
+    private dbService: TransactionService
+  ) {}
 
   ngOnInit() {
     this.route.data.subscribe((data) => {
@@ -34,12 +40,11 @@ export class TransactionFormPage implements OnInit {
       isReturned: [false],
     });
 
-    // this.loadBalances();
-
     this.localLoadBalances();
+
+    console.log('balances:', this.balances);
   }
 
-  // Load form fields dynamically based on the type
   async setTransactionType(type: string) {
     this.transactionType = type;
     this.transactionForm.patchValue({ type });
@@ -48,9 +53,10 @@ export class TransactionFormPage implements OnInit {
   async submitForm() {
     if (this.transactionForm.valid) {
       console.log('Form Submitted:', this.transactionForm.value);
+
       const formValue = this.transactionForm.value;
 
-      let t : Transaction = {
+      let transaction: Transaction = {
         id: formValue.id,
         description: formValue.description,
         type: formValue.type,
@@ -60,73 +66,84 @@ export class TransactionFormPage implements OnInit {
         contact: formValue.contact,
         isReturned: formValue.isReturned,
       };
+
+      console.log('Transaction:', transaction);
+
       try {
-        // Call the DbService to add the transaction
-        // await this.dbService.addTransaction(t);
+        this.addBalance(transaction);
 
-        // Update the balances
-        // await this.balanceService.addBalanceWithTransaction(t)
+        console.log('Balance added:', this.balances);
 
-        this.addBalance(t)
+        await this.dbService.addTransaction(transaction);
 
-        this.router.navigate(['/']); // Navigate to the desired page (e.g., home or dashboard)
+        this.router.navigate(['/']); // Navigate to the desired page
       } catch (error) {
         console.error('Error adding transaction:', error);
       }
-      
     } else {
       console.error('Form is invalid');
     }
   }
 
-  async loadBalances() {
-    try {
-      this.balances = await this.balanceService.getAllBalances();
-    } catch (error) {
-      console.error('Error loading balances:', error);
-    }
-  }
-
   localLoadBalances() {
-    let test = localStorage.getItem('balances');
-    this.balances = [
-      { id: 1, date: new Date(), time: new Date().toTimeString().split(' ')[0], total: 0, saved: 0, loaned: 0, borrowed: 0, spent: 0, received: 0 },
-    ];
-    if (test) {
-      this.balances = JSON.parse(test);
-    }
+    const savedBalances = localStorage.getItem('balances');
+    this.balances = savedBalances
+      ? JSON.parse(savedBalances)
+      : [];
   }
 
-  addBalance(t: Transaction){
-    let n : number = this.balances.length;
-    var balance: Balance = this.balances[n - 1];
-    balance.date = t.date;
-    balance.time = t.time;
-
-    if (t.type === 'Loan') {
-      balance.loaned += t.amount;
-      balance.total -= t.amount;
+  addBalance(transaction: Transaction) {
+    // Add an initial balance if the list is empty
+    if (this.balances.length === 0) {
+      this.balances.push({
+        id: 1,
+        date: new Date(),
+        time: new Date().toTimeString().split(' ')[0],
+        total: 0,
+        saved: 0,
+        loaned: 0,
+        borrowed: 0,
+        spent: 0,
+        received: 0,
+      });
     }
 
-    if (t.type === 'Borrow') {
-      balance.borrowed += t.amount;
-      balance.total += t.amount;
+    // Clone the last balance
+    const lastBalance = { ...this.balances[this.balances.length - 1] };
+
+    // Update the balance based on the transaction
+    lastBalance.date = transaction.date;
+    lastBalance.time = transaction.time;
+
+    switch (transaction.type) {
+      case 'Loan':
+        lastBalance.loaned += transaction.amount;
+        lastBalance.total -= transaction.amount;
+        break;
+      case 'Borrow':
+        lastBalance.borrowed += transaction.amount;
+        lastBalance.total += transaction.amount;
+        break;
+      case 'Spend':
+        lastBalance.spent += transaction.amount;
+        lastBalance.total -= transaction.amount;
+        break;
+      case 'Top-up':
+        lastBalance.received += transaction.amount;
+        lastBalance.total += transaction.amount;
+        break;
     }
 
-    if (t.type === 'Spend') {
-      balance.spent += t.amount;
-    }
+    console.log('Updated balance:', lastBalance);
 
-    if (t.type === 'Receive') {
-      balance.received += t.amount;
-    }
+    // Add the updated balance to the list
+    this.balances.push(lastBalance);
 
-    this.balances.push(balance);
-
+    // Save balances to local storage
     localStorage.setItem('balances', JSON.stringify(this.balances));
   }
 
   async cancel() {
-    this.router.navigate(['/']); // Navigate to the desired page (e.g., home or dashboard)
+    this.router.navigate(['/']); // Navigate to the desired page
   }
 }

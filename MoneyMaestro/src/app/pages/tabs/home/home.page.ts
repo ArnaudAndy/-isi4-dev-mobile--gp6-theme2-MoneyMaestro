@@ -78,7 +78,6 @@ export class HomePage implements OnInit, AfterContentChecked {
     ];
     if (test) {
       this.balances = JSON.parse(test);
-      console.log(this.balances);
     }
   }
 
