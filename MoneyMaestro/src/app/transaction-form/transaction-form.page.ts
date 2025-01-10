@@ -5,6 +5,9 @@ import { TransactionService } from '../services/transaction/transaction.service'
 import { Transaction } from '../models/transaction/transaction';
 import { Balance } from '../models/balance/balance';
 import { BalanceService } from '../services/balance/balance.service';
+import { Contact, Contacts, ContactFieldType } from '@awesome-cordova-plugins/contacts/ngx';
+// import { Contacts, Contact, ContactFieldType } from '@ionic-native/contacts/ngx';
+// import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 
 @Component({
   selector: 'app-transaction-form',
@@ -15,16 +18,23 @@ export class TransactionFormPage implements OnInit {
   transactionForm!: FormGroup;
   transactionType: string = ''; // Will hold the type of transaction (Loan, Borrow, etc.)
   balances: Balance[] = [];
+  contactList: Contact[] = [];
+  transactions: Transaction[] = [];
+  errorMessage: string = '';
 
   constructor(
     private balanceService: BalanceService,
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private dbService: TransactionService
+    private dbService: TransactionService,
+    private contacts: Contacts,
+    // private androidPermissions: AndroidPermissions
   ) {}
 
   ngOnInit() {
+    this.getContacts();
+
     this.route.data.subscribe((data) => {
       this.setTransactionType(data['type']);
     });
@@ -36,7 +46,7 @@ export class TransactionFormPage implements OnInit {
       amount: [null, [Validators.required, Validators.min(1)]],
       date: [new Date().toISOString().split('T')[0], Validators.required],
       time: [new Date().toLocaleTimeString('en-GB', { hour12: false }), Validators.required],
-      contact: ['', [Validators.maxLength(100)]],
+      contact: [''],
       isReturned: [false],
     });
 
@@ -44,6 +54,14 @@ export class TransactionFormPage implements OnInit {
 
     console.log('balances:', this.balances);
   }
+
+  // Load or refresh data when the page enters
+  ionViewWillEnter() {
+    this.loadTransactions();
+    this.localLoadBalances();
+    this.getContacts();
+  }
+
 
   async setTransactionType(type: string) {
     this.transactionType = type;
@@ -70,6 +88,7 @@ export class TransactionFormPage implements OnInit {
       console.log('Transaction:', transaction);
 
       try {
+        if(this.isTransactionGood(transaction)) {
         this.addBalance(transaction);
 
         console.log('Balance added:', this.balances);
@@ -77,11 +96,23 @@ export class TransactionFormPage implements OnInit {
         await this.dbService.addTransaction(transaction);
 
         this.router.navigate(['/']); // Navigate to the desired page
+        }else{
+          this.errorMessage = 'This person already has a loan that has not been returned';
+        }
       } catch (error) {
         console.error('Error adding transaction:', error);
       }
     } else {
       console.error('Form is invalid');
+      this.errorMessage = 'Please fill in all fields correctly';
+    }
+  }
+
+  async loadTransactions() {
+    try {
+      this.transactions = await this.dbService.getAllTransactions();
+    } catch (error) {
+      console.error("Error loading transactions:", error);
     }
   }
 
@@ -146,4 +177,38 @@ export class TransactionFormPage implements OnInit {
   async cancel() {
     this.router.navigate(['/']); // Navigate to the desired page
   }
+
+  async getContacts() {
+    try {
+      // Specify the fields to retrieve
+      const desiredFields: ContactFieldType[] = ['displayName', 'phoneNumbers'];
+      
+      const contacts = await this.contacts.find(desiredFields, { multiple: true });
+      this.contactList = contacts;
+      console.log('Contacts:', this.contactList);
+    } catch (error) {
+      console.error('Error fetching contacts:', error);
+    }
+  }
+
+  isTransactionGood(t: Transaction) {
+    let filtered = this.transactions.filter(x => (x.contact === t.contact && x.isReturned === false && x.type === t.type && x.type === 'Loan'));
+    if (filtered.length > 0) {
+      return false;
+    }
+    return true;
+  }
+
+  // checkPermissions() {
+  //   this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.READ_CONTACTS).then(
+  //     result => {
+  //       if (!result.hasPermission) {
+  //         this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.READ_CONTACTS);
+  //       }
+  //     },
+  //     error => {
+  //       console.error('Permission error:', error);
+  //     }
+  //   );
+  // }
 }

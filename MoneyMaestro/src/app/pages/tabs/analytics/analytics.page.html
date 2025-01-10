@@ -1,6 +1,6 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Analytics</ion-title>
+<ion-header class="ion-no-border" translucent>
+  <ion-toolbar color="secondary">
+    <ion-title color="primary" mode="ios">Transactions Analysis</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -22,11 +22,11 @@
       <ion-label>Operation Type</ion-label>
       <ion-select formControlName="operationType">
         <ion-select-option value="">All</ion-select-option>
-        <ion-select-option value="expenditure">Expenditure</ion-select-option>
-        <ion-select-option value="inflow">Inflow</ion-select-option>
-        <ion-select-option value="borrowing">Borrowing</ion-select-option>
-        <ion-select-option value="loan">Loan</ion-select-option>
-        <ion-select-option value="saving">Saving</ion-select-option>
+        <ion-select-option value="Spend">Expenditure</ion-select-option>
+        <ion-select-option value="Top-up">Inflow</ion-select-option>
+        <ion-select-option value="Borrow">Borrowing</ion-select-option>
+        <ion-select-option value="Loan">Loan</ion-select-option>
+        <ion-select-option value="Save">Saving</ion-select-option>
       </ion-select>
     </ion-item>
 
@@ -35,6 +35,22 @@
       <ion-select formControlName="dataPeriod">
         <ion-select-option value="day">Day</ion-select-option>
         <ion-select-option value="week">Week</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item *ngIf="form.value.dataPeriod === 'week'">
+      <ion-label>Week</ion-label>
+      <ion-select formControlName="week">
+        <ion-select-option value="current">Current Week</ion-select-option>
+        <ion-select-option value="previous">Previous Week</ion-select-option>
+      </ion-select>
+    </ion-item>
+    
+    <ion-item *ngIf="form.value.dataPeriod === 'day'">
+      <ion-label>Day</ion-label>
+      <ion-select formControlName="day">
+        <ion-select-option value="current">Today</ion-select-option>
+        <ion-select-option value="previous">Yesterday</ion-select-option>
       </ion-select>
     </ion-item>
 

@@ -39,7 +39,7 @@
         </ion-thumbnail>
 
         <ion-label>
-          <ion-text>{{ transaction?.type }}</ion-text><br />
+          <ion-text color="primary">{{ transaction?.type }}</ion-text><br />
           <ion-text>{{ transaction?.description }}</ion-text>
           <p>
             <ion-text>
@@ -59,8 +59,12 @@
         </ion-label>
 
         <ion-text slot="end" [color]="(transaction?.type === 'Loan' || transaction?.type === 'Spend') ? 'danger' : 'primary'">
-          {{ transaction?.amount }} FCFA
+          {{ transaction?.amount }} FCFA <br />
+          <ion-button color="success" fill="outline" *ngIf="!transaction?.isReturned && transaction?.type === 'Loan'" (click)="markAsReturned(transaction)">
+            Return
+          </ion-button>
         </ion-text>
+        
       </ion-item>
     </ion-item-group>
   </ion-list>

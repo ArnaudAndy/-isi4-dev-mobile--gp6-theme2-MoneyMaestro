@@ -23,6 +23,12 @@
             <p class="acc-amt"><ion-text color="white">{{ balances[balances.length - 1]?.total }} FCFA</ion-text></p>
             <span> On {{ balances[balances.length - 1]?.date  | date: 'MMM d, y' }}</span>
           </ion-label>
+          <ion-card *ngIf="recommendationMessage" class="recommendation-card" color="primary">
+            <ion-card-content>
+              <p>{{ spendingLevel }} consumption level</p>
+              <p>{{ recommendationMessage }}</p>
+            </ion-card-content>
+          </ion-card>          
         </div>
       </ng-template>
     </swiper>
@@ -76,7 +82,7 @@
           </p>
           <p>
             <ion-text *ngIf="(transaction?.type === 'Loan' || transaction?.type === 'Borrow')">
-              Contact: {{ transaction?.contact }}
+              Contact: <br />{{ transaction?.contact }}
             </ion-text>
           </p>
         </ion-label>

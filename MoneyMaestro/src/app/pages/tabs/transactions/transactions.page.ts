@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Balance } from 'src/app/models/balance/balance';
 import { Transaction } from 'src/app/models/transaction/transaction';
 import { BalanceService } from 'src/app/services/balance/balance.service';
 import { TransactionService } from 'src/app/services/transaction/transaction.service';
@@ -12,6 +13,7 @@ declare var gapi: any;  // Declare gapi to avoid TypeScript errors
 })
 export class TransactionsPage implements OnInit {
 
+  balances: Balance[] = [];
   allTransactions: Transaction[] = [];
   transactions: Transaction[] = [];
   segmentValue = 'in';
@@ -19,10 +21,19 @@ export class TransactionsPage implements OnInit {
   constructor(private dbService: TransactionService, private balanceService: BalanceService) { }
 
   ngOnInit() {
-    this.filterTransactions();
+    this.localLoadBalances();
     this.loadTransactions();
+    this.filterTransactions();
     this.initializeGoogleAPI();
   }
+
+  // Load or refresh data when the page enters
+  ionViewWillEnter() {
+    this.localLoadBalances();
+    this.loadTransactions();
+    this.filterTransactions();
+  }
+
 
   // Fetch transactions from the DbService
   async loadTransactions() {
@@ -31,6 +42,64 @@ export class TransactionsPage implements OnInit {
     } catch (error) {
       console.error('Error loading transactions:', error);
     }
+  }
+
+  async updateTransaction(t: Transaction) {
+    try {
+      await this.dbService.updateTransaction(t);
+    } catch (error) {
+      console.error('Error updating transaction:', error);
+    }
+  }
+
+  localLoadBalances() {
+    const savedBalances = localStorage.getItem('balances');
+    this.balances = savedBalances
+      ? JSON.parse(savedBalances)
+      : [];
+  }
+
+  addBalance(transaction: Transaction) {
+    // Add an initial balance if the list is empty
+    if (this.balances.length === 0) {
+      this.balances.push({
+        id: 1,
+        date: new Date(),
+        time: new Date().toTimeString().split(' ')[0],
+        total: 0,
+        saved: 0,
+        loaned: 0,
+        borrowed: 0,
+        spent: 0,
+        received: 0,
+      });
+    }
+
+    // Clone the last balance
+    const lastBalance = { ...this.balances[this.balances.length - 1] };
+
+    // Update the balance based on the transaction
+    lastBalance.date = new Date;
+    lastBalance.time = new Date().toTimeString().split(' ')[0];
+
+    if(transaction.type === 'Loan') {
+      lastBalance.loaned -= transaction.amount;
+      lastBalance.total += transaction.amount;
+    }
+    
+    console.log('Updated balance:', lastBalance);
+
+    // Add the updated balance to the list
+    this.balances.push(lastBalance);
+
+    // Save balances to local storage
+    localStorage.setItem('balances', JSON.stringify(this.balances));
+  }
+
+  markAsReturned(t: Transaction) {
+    t.isReturned = true;
+    this.addBalance(t);
+    this.updateTransaction(t);
   }
 
   filterTransactions() {

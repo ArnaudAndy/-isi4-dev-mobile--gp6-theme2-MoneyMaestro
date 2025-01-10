@@ -1,10 +1,10 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>transaction-form</ion-title>
+<ion-header class="ion-no-border" translucent>
+  <ion-toolbar color="secondary">
+    <ion-title></ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="transaction-form-container">
+<ion-content color="secondary" class="transactions">
   <ion-card>
     <ion-card-header>
       <ion-card-title>{{ transactionType }}</ion-card-title>
@@ -46,17 +46,22 @@
           <ion-datetime id="time" presentation="time" formControlName="time"></ion-datetime>
         </ion-item>
 
-        <!-- Contact (Conditionally Rendered) -->
+        <!-- Contact Dropdown -->
         <div *ngIf="transactionType === 'Loan' || transactionType === 'Borrow'">
           <ion-item>
-            <ion-label position="stacked">Contact (Email)</ion-label>
-            <ion-input id="contact" type="email" formControlName="contact"></ion-input>
+            <ion-label position="stacked">Contact</ion-label>
+            <ion-select id="contact" formControlName="contact" placeholder="Select a contact">
+              <ion-select-option *ngFor="let contact of contactList" [value]="contact.displayName">
+                {{ contact.displayName || 'Unknown Name' }}
+              </ion-select-option>
+            </ion-select>
           </ion-item>
           <ion-text color="danger"
             *ngIf="transactionForm.controls.contact.invalid && transactionForm.controls.contact.touched">
-            <p>Enter a valid email address.</p>
+            <p>Please select a contact.</p>
           </ion-text>
         </div>
+
 
         <!-- Is Returned (Conditionally Rendered) -->
         <div *ngIf="transactionType === 'Loan' || transactionType === 'Borrow'">
@@ -64,14 +69,20 @@
             <ion-label>Is Returned</ion-label>
             <ion-checkbox slot="start" id="isReturned" formControlName="isReturned"></ion-checkbox>
           </ion-item>
+          <ion-text color="danger"
+            *ngIf="errorMessage">
+            <p>{{ errorMessage }}</p>
+          </ion-text>
         </div>
 
         <!-- Form Actions -->
         <div class="form-actions ion-margin-top">
-          <ion-button expand="full" type="submit" >Submit</ion-button>
+          <ion-button expand="full" type="submit">Submit</ion-button>
           <ion-button expand="full" color="light" type="button" (click)="cancel()">Cancel</ion-button>
         </div>
       </form>
     </ion-card-content>
   </ion-card>
+  <br />
+  <br />
 </ion-content>
